@@ -111,9 +111,6 @@ lastX = 0		# Initialize last sound played
 lastY = 0
 lastSpecial = 0
 
-# Start with webActive so we can toggle it with a command
-webActive = 1
-
 # Special sound file counts and thresholds for playing a sound every X activations
 specialCount = [[0, 0, 0, 0, 0, 0],
 	[0, 0, 0, 0, 0, 0],
@@ -156,10 +153,6 @@ os.system("amixer -D pulse sset Master 100%")
 
 # Flag for ad hoc mode
 adHoc = 0
-
-# Set up queue for the web app and spawn a thread
-webThread = threading.Thread(target=webSound)
-webThread.start()
 
 # Default volume for the sounds is 50%
 currentVolume = .5
