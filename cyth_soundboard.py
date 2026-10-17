@@ -7,11 +7,9 @@ import pygame
 import os
 import random
 import re
-from pydub import AudioSegment
 import numpy as np
 import pulsectl
 import threading
-from webSound import getWebSound
 from pathlib import Path
 
 # Global counts to ensure we don't immediately repeat the same file
@@ -99,26 +97,6 @@ def getSound(x,y):		# Button 2 increments x, Button 3 increments y
 	filename = getRandomFile(basePath + 'pos' + str(x) + str(y),x,y)
 	return filename
 	
-# This function is spawned as a separate thread and can play sounds asynchronously from the web	query interface	
-def webSound():
-	soundPlaying = 0
-	
-	while True:
-		if webActive == 1:
-			# Read off the queue
-			soundPath = getWebSound(5)
-			if soundPath is not None:
-				soundPath = os.path.join(basePath, 'sorted', soundPath)
-				if Path(soundPath).is_file() and soundPlaying <= 0:
-					print('Playing ' + soundPath + ' from the web!')
-					pygame.mixer.stop()
-					sound = pygame.mixer.Sound(soundPath)
-					sound.set_volume(1)
-					sound.play()
-					soundPlaying = 5
-			soundPlaying -= 1
-			sleep(1)
-
 # Setup the environment by initializing pygame, finding the right controller,
 # setting up initial variables, and configuring button actions
 
@@ -222,17 +200,7 @@ for event in controller.read_loop():
 			if event.value == 0:
 				# Button 1 release
 				if event.code == button1:
-					# Check for button 1 longer press
-					if button1_pressTime + longerPressTime < pressTime:
-						# We want to disable or enable the web activity in this case
-						if webActive == 1:
-							webActive = 0
-							print('Deactivating web access...')
-						else:
-							webActive = 1
-							print('Activating web access...')
-					# Check for button 1 long press
-					elif button1_pressTime + longPressTime < pressTime:
+					if button1_pressTime + longPressTime < pressTime:
 						# If last sound was not a long press
 						x = lastX
 						y = lastY
